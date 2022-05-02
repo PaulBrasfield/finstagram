@@ -6,7 +6,7 @@ import { Input } from "@material-ui/core";
 import logo from "../images/logo.png";
 import ImageUpload from "../components/ImageUpload";
 
-import { db, auth } from "../firebase";
+import { auth } from "../firebase";
 import "../styles/SignUp.css";
 
 function getModalStyle() {
@@ -118,24 +118,33 @@ export default function SimpleModal() {
   return (
     <div>
       {user ? (
-        <Button variant="contained" color="primary" onClick={handleLogOut}>
+        <Button
+          className="logOut__button"
+          variant="contained"
+          color="grey"
+          onClick={handleLogOut}
+        >
           Log Out
         </Button>
       ) : (
         <div className="app__loginContainer">
-          <Button variant="contained" color="primary" onClick={handleLogin}>
+          <Button
+            className="signUp__button"
+            variant="contained"
+            color="grey"
+            onClick={handleLogin}
+          >
             Login
           </Button>
-          <Button variant="contained" color="primary" onClick={handleOpen}>
+          <Button variant="contained" color="grey" onClick={handleOpen}>
             Sign Up
           </Button>
-          .
         </div>
       )}
       {user?.displayName ? (
         <ImageUpload username={user.displayName}></ImageUpload>
       ) : (
-        <h3>You must be signed in to upload</h3>
+        <h5>You must log in to upload</h5>
       )}
       {/* Sign Up Modal */}
       <Modal
