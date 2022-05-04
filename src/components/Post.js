@@ -1,27 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Post.css";
 import Avatar from "@material-ui/core/Avatar";
 import firebase from "firebase/compat/app";
 import { db } from "../firebase";
 
-function Post({ username, user, avatar, caption, imageUrl, postId }) {
+function Post({ postId, avatar, username, caption, imageUrl, user }) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
 
-  const postComment = (event) => {
-    event.preventDefault();
-
-    db.collection("posts").doc(postId).collection("comments").add({
-      text: comment,
-      username: username,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    });
-    setComment("");
-  };
-
   useEffect(() => {
     let unsubscribe;
-
     if (postId) {
       unsubscribe = db
         .collection("posts")
@@ -29,7 +17,12 @@ function Post({ username, user, avatar, caption, imageUrl, postId }) {
         .collection("comments")
         .orderBy("timestamp", "desc")
         .onSnapshot((snapshot) => {
-          setComments(snapshot.docs.map((doc) => doc.data()));
+          setComments(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              comment: doc.data(),
+            }))
+          );
         });
     }
 
@@ -38,47 +31,87 @@ function Post({ username, user, avatar, caption, imageUrl, postId }) {
     };
   }, [postId]);
 
+  const postComment = (event) => {
+    event.preventDefault();
+    db.collection("posts").doc(postId).collection("comments").add({
+      text: comment,
+      username: user.displayName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setComment("");
+  };
+
+  const deleteComment = (id) => {
+    db.collection("posts").doc(postId).collection("comments").doc(id).delete();
+  };
+
+  const deletePost = () => {
+    db.collection("posts").doc(postId).delete();
+  };
+
   return (
     <div className="post">
       <div className="post__header">
-        {/* Header -> Avatar -> Username */}
         <Avatar className="post__avatar" alt="username" src={avatar} />
         <h3>{username}</h3>
+        {username === user?.displayName ? (
+          <button
+            className="post__deletePost"
+            onClick={deletePost}
+            title="Delete Post"
+          >
+            <strong>X</strong>
+          </button>
+        ) : (
+          <div></div>
+        )}
       </div>
 
-      {/* Image */}
-      <img className="post__image" src={imageUrl} alt="Post" />
+      <img className="post__image" src={imageUrl} alt="" />
 
-      {/* Username -> Caption */}
       <h4 className="post__text">
-        <strong>{username}</strong>: {caption}
+        <strong>{username}</strong> {caption}
       </h4>
 
       <div className="post__comments">
-        {comments.map((comment) => (
-          <p>
-            <b>{comment.username}</b>: {comment.text}
-          </p>
+        {comments.map(({ id, comment }) => (
+          <div className="post__comment">
+            {comment.username === user?.displayName ? (
+              <button
+                className="post__deleteComment"
+                onClick={() => deleteComment(id)}
+                title="Delete comment"
+              >
+                <strong>X</strong>
+              </button>
+            ) : (
+              <div></div>
+            )}
+            <p>
+              <strong>{comment.username}</strong>: {comment.text}
+            </p>
+          </div>
         ))}
       </div>
-
-      <form className="post__commentBox">
-        <input
-          className="post__input"
-          type="text"
-          placeholder="Add a comment..."
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-        <button
-          className="post__button"
-          type="submit"
-          disabled={!comment}
-          onClick={postComment}
-        >
-          Post
-        </button>
-      </form>
+      {user && (
+        <form className="post__commentBox">
+          <textarea
+            type="text"
+            className="post__input"
+            placeholder="Add a comment..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <button
+            className="post__button"
+            disabled={!comment}
+            type="submit"
+            onClick={postComment}
+          >
+            Post
+          </button>
+        </form>
+      )}
     </div>
   );
 }

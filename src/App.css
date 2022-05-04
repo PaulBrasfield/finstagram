@@ -4,26 +4,48 @@
 
 .app {
   background-color: #fafafa;
+  min-height: 100vh;
 }
 
 .app__posts {
   padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.app__logoutContainer {
+  margin-right: 20px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+}
+
+.app__loginContainer {
+  margin-right: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
 }
 
 .app__header {
-  object-fit: contain;
-  padding: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #fff;
+  width: 100%;
   border-bottom: 1px solid lightgray;
-  background-color: white;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .app__headerImage {
-  /* width: 5%; */
-  max-width: 100px;
-  height: auto;
+  background-color: #fff;
+  padding: 20px;
   object-fit: contain;
+}
+
+.app__signup {
+  display: flex;
+  flex-direction: column;
 }

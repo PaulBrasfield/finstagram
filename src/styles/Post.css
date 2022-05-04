@@ -46,6 +46,9 @@
   border-radius: 0px;
   padding: 10px;
   flex: 1;
+  resize: none;
+  height: auto;
+  max-height: 30px;
 }
 
 .post__button {
@@ -55,7 +58,7 @@
   border-radius: 0px;
   margin-left: 0px;
   width: 50px;
-  height: 38px;
+  height: auto;
 
   background-color: transparent;
   color: #6082a3;
@@ -64,4 +67,13 @@
 .post__button:hover {
   background-color: #6082a3;
   color: white;
+}
+
+.post__deleteComment {
+  display: inline-table;
+}
+
+.post__header button {
+  width: 25px;
+  margin-left: 250px;
 }

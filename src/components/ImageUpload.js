@@ -89,6 +89,7 @@ function ImageUpload({ username }) {
             <input
               className="file__Input "
               type="file"
+              accept="image/png, image/jpeg"
               onChange={handleChange}
             ></input>
           </p>
